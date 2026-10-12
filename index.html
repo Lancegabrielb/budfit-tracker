@@ -66,7 +66,7 @@
     display: none;
     flex-direction: column;
     min-height: 100vh;
-    padding-bottom: 90px;
+    padding-bottom: 100px;
   }
 
   header {
@@ -219,14 +219,16 @@
   }
   .nav-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 
-  /* FLOATING AI ASSISTANT WIDGET */
+  /* ================= RESTORED FLOATING AI ASSISTANT WIDGET ================= */
   #aiWidgetBtn {
-    position: fixed; bottom: 80px; right: 24px; width: 52px; height: 52px; background: var(--accent-blue);
+    position: fixed; bottom: 85px; right: 24px; width: 54px; height: 54px; background: var(--accent-blue);
     border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(27, 100, 242, 0.5); z-index: 9500; font-size: 22px;
+    box-shadow: 0 4px 20px rgba(27, 100, 242, 0.6); z-index: 9500; font-size: 24px; transition: 0.2s;
   }
+  #aiWidgetBtn:hover { transform: scale(1.08); background: var(--accent-blue-hover); }
+  
   #aiChatDrawer {
-    position: fixed; bottom: 142px; right: 24px; width: 340px; background: var(--bg-card);
+    position: fixed; bottom: 150px; right: 24px; width: 340px; background: var(--bg-card);
     border: 1px solid var(--border-highlight); border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
     display: none; flex-direction: column; overflow: hidden; z-index: 9500;
   }
@@ -481,7 +483,7 @@
     </nav>
   </div>
 
-  <!-- FLOATING AI COMPANION WIDGET -->
+  <!-- RESTORED FLOATING AI COMPANION WIDGET -->
   <div id="aiWidgetBtn" onclick="toggleAIChat()">🤖</div>
   <div id="aiChatDrawer">
     <div class="ai-header">
@@ -567,7 +569,5 @@
   }
 </script>
 
-</body>
-</html>
 </body>
 </html>
