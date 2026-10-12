@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BudFit: AI-Assisted Fitness Tracker</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for analytics charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Montserrat Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#080c14',
+              card: '#111827',
+              cardHover: '#1f293d',
+              border: 'rgba(27, 100, 242, 0.3)',
+              blue: '#1B64F2',
+              blueHover: '#0052cc',
+              cyan: '#06b6d4',
+              accent: '#3b82f6',
+              textMuted: '#94a3b8'
+            }
+          },
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #080c14;
+      color: #f8fafc;
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: 80px; /* Space for bottom wireframe nav */
+    }
+
+    .glass-box {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(27, 100, 242, 0.3);
+      border-radius: 16px;
+    }
+
+    .wireframe-box {
+      background: #0d1322;
+      border: 2px solid rgba(27, 100, 242, 0.35);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .wireframe-x {
+      position: relative;
+      background: #111a2e;
+      overflow: hidden;
+    }
+
+    .wireframe-x::before, .wireframe-x::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.15;
+    }
+
+    .wireframe-x::before {
+      background: linear-gradient(to top right, transparent calc(50% - 1px), #1B64F2 50%, transparent calc(50% + 1px));
+    }
+
+    .wireframe-x::after {
+      background: linear-gradient(to bottom right, transparent calc(50% - 1px), #1B64F2 50%, transparent calc(50% + 1px));
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #080c14;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #1B64F2;
+      border-radius: 4px;
+    }
+
+    .glow-blue {
+      box-shadow: 0 0 20px rgba(27, 100, 242, 0.35);
+    }
+
+    /* Active Tab Highlight */
+    .tab-nav-active {
+      background: #1B64F2 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 15px rgba(27, 100, 242, 0.5);
+    }
+  </style>
+</head>
+<body class="min-h-screen custom-scrollbar flex flex-col justify-between">
+
+  <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-md border-b border-brand-border px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+        <div class="bg-brand-blue p-2 rounded-xl text-white shadow-lg glow-blue">
+          <i class="ph-bold ph-barbell text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-extrabold tracking-wider text-white">BudFit<span class="text-brand-blue">:</span></h1>
+          <p class="text-[10px] text-brand-textMuted uppercase font-semibold tracking-widest">AI-assisted Fitness Tracker</p>
+        </div>
+      </div>
+
+      <!-- User Login / Profile Badge -->
+      <div class="flex items-center space-x-3">
+        <div id="user-badge" class="flex items-center space-x-2 bg-brand-card px-3 py-1.5 rounded-xl border border-brand-border cursor-pointer hover:border-brand-blue transition-all" onclick="openLoginModal()">
+          <div class="w-7 h-7 rounded-full bg-brand-blue flex items-center justify-center text-white text-xs font-bold" id="header-avatar">
+            L
+          </div>
+          <div class="text-left hidden sm:block">
+            <p class="text-xs font-bold text-white leading-tight" id="header-username">Lance Bautista</p>
+            <p class="text-[10px] text-brand-cyan" id="header-usergoal">Muscle Building</p>
+          </div>
+          <i class="ph-bold ph-caret-down text-xs text-brand-textMuted"></i>
+        </div>
+
+        <button onclick="openAiModal()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-blue/20 hover:bg-brand-blue text-brand-accent hover:text-white border border-brand-blue/40 transition-all">
+          <i class="ph-bold ph-brain text-sm"></i> AI Recalibrate
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-6 flex-grow">
+
+    <!-- =================================================================== -->
+    <!-- WIREFRAME PAGE 1: HOME PAGE -->
+    <!-- =================================================================== -->
+    <section id="page-home" class="space-y-6">
+      
+      <!-- Title Header -->
+      <div class="border-b border-brand-border pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          BudFit: AI-assisted Fitness Tracker
+        </h2>
+        <span class="text-xs text-brand-cyan bg-brand-blue/10 px-3 py-1 rounded-full border border-brand-blue/30 self-start sm:self-auto">
+          ✨ Interactive Dashboard View
+        </span>
+      </div>
+
+      <!-- Top Section: Video Reel Left + Meal Plan & Food Tracker Right -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Video Reel Player (Left Column - Wireframe 1) -->
+        <div class="lg:col-span-4 wireframe-box p-4 flex flex-col justify-between h-[360px] sm:h-[400px]">
+          <div class="flex items-center justify-between border-b border-brand-border/60 pb-2 mb-2">
+            <span class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i class="ph-bold ph-film-strip text-brand-blue"></i> Fitness Motivation Reel
+            </span>
+            <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-bold">REEL #1</span>
+          </div>
+
+          <!-- Video Player Screen Component -->
+          <div class="relative flex-grow rounded-xl overflow-hidden bg-black flex items-center justify-center border border-brand-border">
+            <img id="reel-poster" src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80" alt="Workout Video" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
+            
+            <!-- Play Button Overlay -->
+            <button onclick="playCurrentReel()" class="relative z-10 w-16 h-16 rounded-full bg-brand-blue/90 text-white flex items-center justify-center text-3xl shadow-xl hover:scale-110 transition-transform glow-blue">
+              <i class="ph-fill ph-play" id="reel-play-icon"></i>
+            </button>
+
+            <!-- Video Overlay Info -->
+            <div class="absolute bottom-3 left-3 right-3 z-10 space-y-1">
+              <span class="text-[10px] font-bold uppercase bg-brand-blue px-2 py-0.5 rounded text-white" id="reel-tag">Beginner Form</span>
+              <p class="text-xs font-bold text-white line-clamp-1" id="reel-title">15-Minute Dumbbell Form Technique</p>
+            </div>
+          </div>
+
+          <!-- Reel Controls -->
+          <div class="flex items-center justify-between pt-3 text-xs text-brand-textMuted">
+            <button onclick="prevReel()" class="hover:text-white flex items-center gap-1"><i class="ph-bold ph-caret-left"></i> Prev Reel</button>
+            <span class="text-[11px] text-white/80" id="reel-counter">1 of 3</span>
+            <button onclick="nextReel()" class="hover:text-white flex items-center gap-1">Next Reel <i class="ph-bold ph-caret-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Meal Plan & Food Tracker (Right Upper Section - Wireframe 1) -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Meal Plan Box -->
+            <div class="wireframe-box p-5 space-y-4">
+              <div class="flex items-center justify-between border-b border-brand-border pb-2">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                  <i class="ph-bold ph-cooking-pot text-emerald-400"></i> Meal Plan
+                </h3>
+                <span class="text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">AI Optimized</span>
+              </div>
+
+              <div class="wireframe-x h-28 rounded-xl p-3 flex flex-col justify-center space-y-2 border border-brand-border">
+                <p class="text-xs font-bold text-white" id="home-meal-title">Grilled Chicken & Sweet Potato Bowl</p>
+                <div class="space-y-1">
+                  <div class="w-full bg-brand-dark/80 h-2 rounded-full overflow-hidden">
+                    <div class="bg-emerald-400 h-2 rounded-full" style="width: 75%"></div>
+                  </div>
+                  <p class="text-[10px] text-brand-textMuted flex justify-between">
+                    <span>Protein Target</span>
+                    <span class="text-white font-bold">140g / 180g</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Lines representing meal bullet points -->
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center gap-2 text-brand-textMuted">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="text-white font-medium" id="meal-line-1">Breakfast: Oats with Whey & Berries (450 kcal)</span>
+                </div>
+                <div class="flex items-center gap-2 text-brand-textMuted">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="text-white font-medium" id="meal-line-2">Lunch: Lean Beef Bowl & Brown Rice (650 kcal)</span>
+                </div>
+                <div class="flex items-center gap-2 text-brand-textMuted">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="text-white font-medium" id="meal-line-3">Dinner: Grilled Salmon & Asparagus (520 kcal)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Food Tracker Box -->
+            <div class="wireframe-box p-5 space-y-4">
+              <div class="flex items-center justify-between border-b border-brand-border pb-2">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                  <i class="ph-bold ph-fork-knife text-amber-400"></i> Food Tracker
+                </h3>
+                <span class="text-[11px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Daily Calories</span>
+              </div>
+
+              <div class="flex items-center justify-between gap-4">
+                <!-- Circular Wireframe Graphic -->
+                <div class="relative w-24 h-24 rounded-full border-4 border-amber-400/80 flex flex-col items-center justify-center bg-brand-dark shadow-inner">
+                  <span class="text-xs font-black text-white" id="tracker-current-cal">1,620</span>
+                  <span class="text-[9px] text-brand-textMuted uppercase">/ 2,200 kcal</span>
+                </div>
+
+                <div class="flex-grow space-y-2 text-xs">
+                  <div class="space-y-1">
+                    <div class="flex justify-between text-[11px]">
+                      <span class="text-brand-textMuted">Carbs</span>
+                      <span class="text-white font-semibold">210g</span>
+                    </div>
+                    <div class="w-full bg-brand-dark h-1.5 rounded-full overflow-hidden">
+                      <div class="bg-cyan-400 h-1.5 rounded-full" style="width: 65%"></div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1">
+                    <div class="flex justify-between text-[11px]">
+                      <span class="text-brand-textMuted">Fats</span>
+                      <span class="text-white font-semibold">55g</span>
+                    </div>
+                    <div class="w-full bg-brand-dark h-1.5 rounded-full overflow-hidden">
+                      <div class="bg-amber-400 h-1.5 rounded-full" style="width: 50%"></div>
+                    </div>
+                  </div>
+
+                  <button onclick="addQuickCalorie()" class="w-full mt-1 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-white font-bold text-[11px] border border-amber-500/30 transition-all">
+                    + Log 250 kcal Snack
+                  </button>
+                </div>
+              </div>
+
+              <!-- Lines representing additional macro details -->
+              <div class="pt-1 border-t border-brand-border/40 text-[11px] text-brand-textMuted flex justify-between">
+                <span>Water Intake: <strong class="text-cyan-400" id="home-water-val">1.75 L</strong></span>
+                <button onclick="addWaterHome()" class="text-brand-blue hover:underline">+ Glass</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Section: Workout Plan (Grid Wireframe Boxes - Wireframe 1) -->
+      <div class="wireframe-box p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border pb-2 gap-2">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="ph-bold ph-barbell text-brand-blue"></i> Workout Plan
+            </h3>
+            <p class="text-xs text-brand-textMuted">AI Adjusted Schedule for Lance Bautista</p>
+          </div>
+          <button onclick="openAiModal()" class="self-start sm:self-auto text-xs px-3 py-1.5 rounded-lg bg-brand-blue hover:bg-brand-blueHover text-white font-semibold shadow">
+            ⚡ Adapt Workout Routine
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          
+          <!-- Workout Card 1 -->
+          <div class="wireframe-box p-4 flex flex-col justify-between space-y-3 hover:border-brand-blue transition-all">
+            <div class="wireframe-x h-28 rounded-xl flex items-center justify-center p-3 border border-brand-border">
+              <i class="ph-bold ph-barbell text-3xl text-brand-blue"></i>
+            </div>
+            <div>
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-white">Dumbbell Bench Press</h4>
+                <input type="checkbox" onchange="toggleWorkoutDone(this)" class="accent-brand-blue w-4 h-4 rounded cursor-pointer">
+              </div>
+              <p class="text-[11px] text-brand-textMuted mt-1">4 Sets × 10 Reps • 20 kg</p>
+            </div>
+          </div>
+
+          <!-- Workout Card 2 -->
+          <div class="wireframe-box p-4 flex flex-col justify-between space-y-3 hover:border-brand-blue transition-all">
+            <div class="wireframe-x h-28 rounded-xl flex items-center justify-center p-3 border border-brand-border">
+              <i class="ph-bold ph-arrows-down-up text-3xl text-cyan-400"></i>
+            </div>
+            <div>
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-white">Lat Pulldowns / Rows</h4>
+                <input type="checkbox" onchange="toggleWorkoutDone(this)" class="accent-brand-blue w-4 h-4 rounded cursor-pointer">
+              </div>
+              <p class="text-[11px] text-brand-textMuted mt-1">4 Sets × 12 Reps • 45 kg</p>
+            </div>
+          </div>
+
+          <!-- Workout Card 3 -->
+          <div class="wireframe-box p-4 flex flex-col justify-between space-y-3 hover:border-brand-blue transition-all">
+            <div class="wireframe-x h-28 rounded-xl flex items-center justify-center p-3 border border-brand-border">
+              <i class="ph-bold ph-person-simple-run text-3xl text-emerald-400"></i>
+            </div>
+            <div>
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-white">Incline Treadmill Walk</h4>
+                <input type="checkbox" onchange="toggleWorkoutDone(this)" class="accent-brand-blue w-4 h-4 rounded cursor-pointer">
+              </div>
+              <p class="text-[11px] text-brand-textMuted mt-1">15 Mins • Incline 8.0</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- =================================================================== -->
+    <!-- WIREFRAME PAGE 2: CALENDAR PAGE -->
+    <!-- =================================================================== -->
+    <section id="page-calendar" class="hidden space-y-6">
+      
+      <!-- Title Header Wireframe 2 -->
+      <div class="border-b border-brand-border pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          BudFit: AI-assisted Fitness Tracker
+        </h2>
+        <span class="text-xs font-bold text-brand-blue uppercase tracking-wider">Calendar Tracker View</span>
+      </div>
+
+      <!-- CALENDAR TRACKER Header bar with month picker -->
+      <div class="wireframe-box p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="text-base font-extrabold text-white uppercase tracking-wider">CALENDAR TRACKER</h3>
+          <p class="text-xs text-brand-textMuted">:Displays the users monthly and daily activity log for workouts and meals.</p>
+        </div>
+
+        <div class="flex items-center space-x-3 bg-brand-dark px-4 py-2 rounded-xl border border-brand-border">
+          <button onclick="changeMonth(-1)" class="text-brand-textMuted hover:text-white"><i class="ph-bold ph-caret-left text-base"></i></button>
+          <span class="text-sm font-bold text-white w-36 text-center" id="calendar-month-label">September 2026</span>
+          <button onclick="changeMonth(1)" class="text-brand-textMuted hover:text-white"><i class="ph-bold ph-caret-right text-base"></i></button>
+        </div>
+      </div>
+
+      <!-- Main Calendar Grid + Summary Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Side: Daily Summary & Time Management Timeline (Wireframe 2) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Daily Summary Box -->
+          <div class="wireframe-box p-5 space-y-3">
+            <h3 class="text-base font-bold text-white border-b border-brand-border pb-2">Daily Summary</h3>
+            <p class="text-xs text-brand-textMuted leading-relaxed">
+              :Features a quick overview of completed tasks alongside a Time Management Timeline to help manage daily availability.
+            </p>
+
+            <div class="space-y-2 pt-2 text-xs">
+              <div class="flex items-center justify-between bg-brand-dark p-2.5 rounded-lg border border-brand-border">
+                <span class="text-brand-textMuted">Workout Status:</span>
+                <span class="text-emerald-400 font-bold" id="cal-sum-workout">Upper Body (Completed)</span>
+              </div>
+              <div class="flex items-center justify-between bg-brand-dark p-2.5 rounded-lg border border-brand-border">
+                <span class="text-brand-textMuted">Calorie Balance:</span>
+                <span class="text-cyan-400 font-bold" id="cal-sum-burn">2,100 / 2,200 kcal</span>
+              </div>
+              <div class="flex items-center justify-between bg-brand-dark p-2.5 rounded-lg border border-brand-border">
+                <span class="text-brand-textMuted">AI Consistency Score:</span>
+                <span class="text-amber-400 font-bold">92% On Track</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time Management Timeline (Wireframe 2 - MON, TUE, WED Bar visuals) -->
+          <div class="wireframe-box p-5 space-y-4">
+            <h3 class="text-base font-bold text-white border-b border-brand-border pb-2">Time Management Timeline</h3>
+            <p class="text-xs text-brand-textMuted">Configure available hours for workouts across week days:</p>
+
+            <!-- Bar Chart Representation from Wireframe 2 -->
+            <div class="grid grid-cols-3 gap-3 items-end h-32 pt-4 px-2">
+              
+              <!-- MON Bar -->
+              <div class="flex flex-col items-center gap-2 h-full justify-end">
+                <div class="w-full bg-brand-blue rounded-t-md hover:opacity-80 transition-all cursor-pointer" style="height: 80%" title="Monday - 2 Hours Free"></div>
+                <span class="text-xs font-bold text-white">MON</span>
+              </div>
+
+              <!-- TUE Bar -->
+              <div class="flex flex-col items-center gap-2 h-full justify-end">
+                <div class="w-full bg-brand-blue/50 rounded-t-md hover:opacity-80 transition-all cursor-pointer" style="height: 45%" title="Tuesday - 1 Hour Free"></div>
+                <span class="text-xs font-bold text-white">TUE</span>
+              </div>
+
+              <!-- WED Bar -->
+              <div class="flex flex-col items-center gap-2 h-full justify-end">
+                <div class="w-full bg-brand-blue rounded-t-md hover:opacity-80 transition-all cursor-pointer" style="height: 95%" title="Wednesday - 2.5 Hours Free"></div>
+                <span class="text-xs font-bold text-white">WED</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side: Large Calendar Image / Interactive Day Boxes (Wireframe 2) -->
+        <div class="lg:col-span-7 wireframe-box p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-brand-border pb-2">
+            <span class="text-xs font-bold text-white uppercase">Monthly Activity Log Grid</span>
+            <span class="text-[11px] text-brand-textMuted">Select day to inspect details</span>
+          </div>
+
+          <!-- Calendar Days Header -->
+          <div class="grid grid-cols-7 text-center text-xs font-bold text-brand-textMuted py-1">
+            <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+          </div>
+
+          <!-- Days Grid Wireframes -->
+          <div class="grid grid-cols-7 gap-2" id="calendar-wireframe-grid">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+
+          <!-- Task Breakdown for Selected Date -->
+          <div class="wireframe-x p-4 rounded-xl border border-brand-border space-y-2 text-xs">
+            <p class="font-bold text-brand-cyan" id="selected-date-title">Selected: September 15, 2026</p>
+            <div class="flex justify-between text-brand-textMuted border-t border-brand-border/40 pt-2">
+              <span>Logged Workout: <strong class="text-white">Push Hypertrophy (45m)</strong></span>
+              <span class="text-emerald-400 font-bold">✓ Complete</span>
+            </div>
+            <div class="flex justify-between text-brand-textMuted">
+              <span>Logged Meals: <strong class="text-white">3 Meals (2,150 kcal)</strong></span>
+              <span class="text-emerald-400 font-bold">✓ Logged</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================================== -->
+    <!-- WIREFRAME PAGE 3: PROFILE PAGE -->
+    <!-- =================================================================== -->
+    <section id="page-profile" class="hidden space-y-6">
+      
+      <!-- Title Header Wireframe 3 -->
+      <div class="border-b border-brand-border pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          BudFit: AI-assisted Fitness Tracker
+        </h2>
+        <span class="text-xs font-bold text-brand-blue uppercase tracking-wider">Profile & Progress View</span>
+      </div>
+
+      <!-- User Info Header Box (Wireframe 3) -->
+      <div class="wireframe-box p-5 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center space-x-4">
+          <!-- Avatar Icon Box Wireframe 3 -->
+          <div class="w-16 h-16 rounded-full bg-brand-dark border-2 border-brand-blue flex items-center justify-center text-brand-blue text-3xl font-black shadow-lg">
+            <i class="ph-bold ph-user-circle"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white" id="profile-display-name">Lance Bautista</h3>
+            <p class="text-xs text-brand-cyan font-semibold" id="profile-display-goal">Goal: Muscle Gain & Consistency</p>
+            <p class="text-[11px] text-brand-textMuted mt-1">Height: 178cm • Weight: 72kg • Target: 2,200 kcal</p>
+          </div>
+        </div>
+
+        <!-- Wireframe Description Header Text -->
+        <div class="max-w-md bg-brand-dark/70 p-3 rounded-xl border border-brand-border text-[11px] text-brand-textMuted leading-relaxed">
+          This wireframe shows the Profile & Fitness Track page of BudFit. It displays the users main goal alongside detailed metrics for Workout Consistency and Meal Impact. Monthly bar charts track overall training Frequency and Calorie Balance.
+        </div>
+
+        <button onclick="openLoginModal()" class="px-4 py-2 rounded-xl bg-brand-blue hover:bg-brand-blueHover text-white text-xs font-bold transition-all shadow">
+          Edit Profile / Goals
+        </button>
+      </div>
+
+      <!-- Fitness Track (Detailed Progress) Section -->
+      <div class="wireframe-box p-5 space-y-4">
+        <div class="border-b border-brand-border pb-2">
+          <h3 class="text-base font-bold text-white tracking-wide">
+            FITNESS TRACK <span class="text-xs font-normal text-brand-textMuted">(DETAILED PROGRESS)</span>
+          </h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Workout Consistency Box (Wireframe 3 with X graph) -->
+          <div class="wireframe-box p-4 space-y-3">
+            <h4 class="text-xs font-bold text-white uppercase">Workout Consistency</h4>
+            
+            <div class="wireframe-x h-40 rounded-xl flex items-center justify-center border border-brand-border relative p-2">
+              <canvas id="chartWorkoutConsistency"></canvas>
+            </div>
+
+            <div class="flex justify-between text-[11px] font-bold text-brand-textMuted">
+              <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+            </div>
+          </div>
+
+          <!-- Meal Impact & Calories Box (Wireframe 3 with X graph) -->
+          <div class="wireframe-box p-4 space-y-3">
+            <h4 class="text-xs font-bold text-white uppercase">Meal Impact & Calories</h4>
+            
+            <div class="wireframe-x h-40 rounded-xl flex items-center justify-center border border-brand-border relative p-2">
+              <canvas id="chartMealImpact"></canvas>
+            </div>
+
+            <div class="flex justify-between text-[11px] font-bold text-brand-textMuted">
+              <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Analytics: Frequency & Calorie Balance (Wireframe 3) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- FREQUENCY Bar Chart (SEP, OCT, NOV) -->
+        <div class="wireframe-box p-5 space-y-4">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">FREQUENCY</h3>
+          
+          <!-- Bar Graph Area from Wireframe 3 -->
+          <div class="h-44 w-full relative">
+            <canvas id="chartFrequencyProfile"></canvas>
+          </div>
+
+          <div class="flex justify-around text-xs font-bold text-brand-textMuted pt-2">
+            <span>SEP</span><span>OCT</span><span>NOV</span>
+          </div>
+        </div>
+
+        <!-- CALORIE BALANCE Bar Chart (SEP, OCT, NOV) -->
+        <div class="wireframe-box p-5 space-y-4">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">CALORIE BALANCE</h3>
+          
+          <!-- Bar Graph Area from Wireframe 3 -->
+          <div class="h-44 w-full relative">
+            <canvas id="chartCalorieBalanceProfile"></canvas>
+          </div>
+
+          <div class="flex justify-around text-xs font-bold text-brand-textMuted pt-2">
+            <span>SEP</span><span>OCT</span><span>NOV</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =================================================================== -->
+  <!-- FIXED BOTTOM NAVIGATION BAR (Matches Wireframe: Calendar | Home | Profile) -->
+  <!-- =================================================================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-brand-dark border-t-2 border-brand-blue px-4 py-2">
+    <div class="max-w-xl mx-auto grid grid-cols-3 gap-2">
+      
+      <!-- Calendar Nav Item -->
+      <button onclick="switchTab('calendar')" id="bottom-nav-calendar" class="py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 text-brand-textMuted hover:text-white bg-brand-card border border-brand-border flex items-center justify-center gap-2">
+        <i class="ph-bold ph-calendar-blank text-base"></i> Calendar
+      </button>
+
+      <!-- Home Nav Item -->
+      <button onclick="switchTab('home')" id="bottom-nav-home" class="py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 tab-nav-active border border-brand-blue flex items-center justify-center gap-2">
+        <i class="ph-bold ph-house text-base"></i> Home
+      </button>
+
+      <!-- Profile Nav Item -->
+      <button onclick="switchTab('profile')" id="bottom-nav-profile" class="py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 text-brand-textMuted hover:text-white bg-brand-card border border-brand-border flex items-center justify-center gap-2">
+        <i class="ph-bold ph-user text-base"></i> Profile
+      </button>
+
+    </div>
+  </nav>
+
+
+  <!-- =================================================================== -->
+  <!-- FLOATING AI CHATBOT WIDGET -->
+  <!-- =================================================================== -->
+  <div class="fixed bottom-20 right-4 z-50">
+    <button onclick="toggleAiChat()" class="w-12 h-12 rounded-full bg-brand-blue text-white flex items-center justify-center text-xl shadow-2xl glow-blue hover:scale-110 transition-transform">
+      <i class="ph-bold ph-chat-teardrop-text"></i>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="ai-chat-window" class="hidden absolute bottom-14 right-0 w-80 sm:w-88 rounded-2xl glass-box border border-brand-blue/60 shadow-2xl flex flex-col overflow-hidden" style="height: 420px;">
+      
+      <!-- Chat Header -->
+      <div class="p-3 bg-brand-blue text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="ph-bold ph-robot text-lg"></i>
+          <div>
+            <p class="font-bold text-xs">BudFit AI Companion</p>
+            <p class="text-[9px] text-white/80">Supportive & Non-Intimidating</p>
+          </div>
+        </div>
+        <button onclick="toggleAiChat()" class="hover:text-gray-200"><i class="ph-bold ph-x text-base"></i></button>
+      </div>
+
+      <!-- Messages -->
+      <div id="chat-box" class="flex-grow p-3 overflow-y-auto space-y-3 custom-scrollbar text-xs bg-brand-dark/90">
+        <div class="bg-brand-card p-2.5 rounded-xl border border-brand-border text-white max-w-[85%]">
+          👋 Hi Lance! I'm your BudFit AI. Ask me anything about your workout, diet, or routine adjustments!
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="p-2 bg-brand-card border-t border-brand-border flex gap-2">
+        <input type="text" id="chat-input" placeholder="Ask BudFit AI..." onkeypress="handleChatKey(event)" class="flex-grow bg-brand-dark border border-brand-border text-white text-xs px-3 py-1.5 rounded-xl focus:outline-none focus:border-brand-blue">
+        <button onclick="sendChatMessage()" class="px-3 py-1.5 bg-brand-blue text-white text-xs font-bold rounded-xl hover:bg-brand-blueHover">
+          <i class="ph-bold ph-paper-plane-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =================================================================== -->
+  <!-- AUTHENTICATION / LOGIN & PROFILE SETTINGS MODAL -->
+  <!-- =================================================================== -->
+  <div id="login-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-box max-w-md w-full p-6 space-y-5 border border-brand-blue relative">
+      
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-brand-textMuted hover:text-white">
+        <i class="ph-bold ph-x text-xl"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 border-b border-brand-border pb-3">
+        <div class="p-2 bg-brand-blue rounded-xl text-white text-xl">
+          <i class="ph-bold ph-user-circle"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">User Profile & Login Settings</h3>
+          <p class="text-xs text-brand-textMuted">Configure account profile & fitness goals</p>
+        </div>
+      </div>
+
+      <form onsubmit="saveUserProfile(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-brand-textMuted mb-1">Full Name / User Name:</label>
+          <input type="text" id="input-username" value="Lance Bautista" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl p-2.5 focus:outline-none focus:border-brand-blue">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-brand-textMuted mb-1">Primary Fitness Goal:</label>
+          <select id="input-goal" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl p-2.5 focus:outline-none focus:border-brand-blue">
+            <option value="Muscle Gain">Muscle Gain & Strength</option>
+            <option value="Fat Loss">Fat Loss & Toning</option>
+            <option value="General Fitness">General Fitness & Endurance</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-brand-textMuted mb-1">Target Calories:</label>
+            <input type="number" id="input-cal" value="2200" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl p-2.5 focus:outline-none focus:border-brand-blue">
+          </div>
+          <div>
+            <label class="block font-semibold text-brand-textMuted mb-1">Water Goal (L):</label>
+            <input type="number" step="0.1" id="input-water" value="2.5" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl p-2.5 focus:outline-none focus:border-brand-blue">
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-3">
+          <button type="button" onclick="loginDemoGuest()" class="w-1/2 py-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover text-brand-textMuted font-bold border border-brand-border">
+            Guest Login
+          </button>
+          <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-brand-blue hover:bg-brand-blueHover text-white font-bold shadow">
+            Save Profile
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+
+  <!-- =================================================================== -->
+  <!-- AI RECALIBRATE MODAL -->
+  <!-- =================================================================== -->
+  <div id="ai-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-box max-w-md w-full p-6 space-y-4 border border-brand-blue relative">
+      <button onclick="closeAiModal()" class="absolute top-4 right-4 text-brand-textMuted hover:text-white">
+        <i class="ph-bold ph-x text-xl"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 border-b border-brand-border pb-3">
+        <i class="ph-bold ph-brain text-2xl text-cyan-400"></i>
+        <div>
+          <h3 class="text-base font-bold text-white">AI Adaptive Generator</h3>
+          <p class="text-xs text-brand-textMuted">Recalibrate routine based on recent activity</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-brand-textMuted mb-1 font-semibold">How are you feeling today?</label>
+          <select id="ai-status" class="w-full bg-brand-dark border border-brand-border text-white p-2.5 rounded-xl">
+            <option value="normal">Normal / Energetic</option>
+            <option value="sore">Fatigued / Muscle Soreness</option>
+            <option value="missed">Missed yesterday's session</option>
+          </select>
+        </div>
+
+        <button onclick="runAiRecalibrate()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-blue to-cyan-500 text-white font-bold shadow">
+          Recalibrate Dashboard
+        </button>
+
+        <div id="ai-output" class="hidden p-3 rounded-xl bg-brand-dark border border-brand-border text-white text-xs space-y-1">
+          <!-- Rendered AI feedback -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // App State Variables
+    let currentUser = {
+      name: 'Lance Bautista',
+      goal: 'Muscle Gain',
+      targetCal: 2200,
+      currentCal: 1620,
+      water: 1.75
+    };
+
+    let reels = [
+      {
+        title: "15-Minute Dumbbell Form Technique",
+        tag: "Beginner Form",
+        poster: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        title: "Overcoming Gym Anxiety & Intimidation",
+        tag: "Mindset",
+        poster: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        title: "High-Protein Meal Prep in 10 Mins",
+        tag: "Nutrition",
+        poster: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80"
+      }
+    ];
+    let currentReelIndex = 0;
+    let isReelPlaying = false;
+
+    // View Switching Logic (Wireframe 1, 2, 3)
+    function switchTab(tabName) {
+      document.getElementById('page-home').classList.add('hidden');
+      document.getElementById('page-calendar').classList.add('hidden');
+      document.getElementById('page-profile').classList.add('hidden');
+
+      document.getElementById('page-' + tabName).classList.remove('hidden');
+
+      // Update Bottom Fixed Navigation Styling
+      ['calendar', 'home', 'profile'].forEach(tab => {
+        const btn = document.getElementById('bottom-nav-' + tab);
+        if (tab === tabName) {
+          btn.classList.add('tab-nav-active');
+          btn.classList.remove('text-brand-textMuted', 'bg-brand-card');
+        } else {
+          btn.classList.remove('tab-nav-active');
+          btn.classList.add('text-brand-textMuted', 'bg-brand-card');
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Modal Controls
+    function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+    function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+    function openAiModal() { document.getElementById('ai-modal').classList.remove('hidden'); }
+    function closeAiModal() { document.getElementById('ai-modal').classList.add('hidden'); }
+
+    // User Profile Save
+    function saveUserProfile(e) {
+      e.preventDefault();
+      currentUser.name = document.getElementById('input-username').value;
+      currentUser.goal = document.getElementById('input-goal').value;
+      currentUser.targetCal = parseInt(document.getElementById('input-cal').value);
+
+      updateUserUI();
+      closeLoginModal();
+    }
+
+    function loginDemoGuest() {
+      currentUser.name = "Guest User";
+      currentUser.goal = "General Fitness";
+      updateUserUI();
+      closeLoginModal();
+    }
+
+    function updateUserUI() {
+      document.getElementById('header-username').innerText = currentUser.name;
+      document.getElementById('header-usergoal').innerText = currentUser.goal;
+      document.getElementById('header-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
+
+      document.getElementById('profile-display-name').innerText = currentUser.name;
+      document.getElementById('profile-display-goal').innerText = `Goal: ${currentUser.goal} & Consistency`;
+    }
+
+    // Reel Player Logic
+    function updateReelUI() {
+      const reel = reels[currentReelIndex];
+      document.getElementById('reel-poster').src = reel.poster;
+      document.getElementById('reel-tag').innerText = reel.tag;
+      document.getElementById('reel-title').innerText = reel.title;
+      document.getElementById('reel-counter').innerText = `${currentReelIndex + 1} of ${reels.length}`;
+      
+      const icon = document.getElementById('reel-play-icon');
+      icon.className = isReelPlaying ? 'ph-fill ph-pause' : 'ph-fill ph-play';
+    }
+
+    function playCurrentReel() {
+      isReelPlaying = !isReelPlaying;
+      updateReelUI();
+    }
+
+    function nextReel() {
+      currentReelIndex = (currentReelIndex + 1) % reels.length;
+      isReelPlaying = false;
+      updateReelUI();
+    }
+
+    function prevReel() {
+      currentReelIndex = (currentReelIndex - 1 + reels.length) % reels.length;
+      isReelPlaying = false;
+      updateReelUI();
+    }
+
+    // Interactive Tracker Helpers
+    function addQuickCalorie() {
+      currentUser.currentCal += 250;
+      document.getElementById('tracker-current-cal').innerText = currentUser.currentCal.toLocaleString();
+    }
+
+    function addWaterHome() {
+      currentUser.water += 0.25;
+      document.getElementById('home-water-val').innerText = `${currentUser.water.toFixed(2)} L`;
+    }
+
+    function toggleWorkoutDone(checkbox) {
+      if (checkbox.checked) {
+        checkbox.parentElement.parentElement.classList.add('opacity-50', 'line-through');
+      } else {
+        checkbox.parentElement.parentElement.classList.remove('opacity-50', 'line-through');
+      }
+    }
+
+    // AI Recalibrate
+    function runAiRecalibrate() {
+      const status = document.getElementById('ai-status').value;
+      const output = document.getElementById('ai-modal');
+      const box = document.getElementById('ai-output');
+
+      let message = "";
+      if (status === 'sore') {
+        message = "🧘 <strong>Active Recovery Mode:</strong> Reduced heavy compound weights by 20% today to prioritize joint recovery.";
+      } else if (status === 'missed') {
+        message = "⚡ <strong>Adaptive Makeup:</strong> Added 1 light makeup set to today's Push workout without risking overtraining.";
+      } else {
+        message = "🔥 <strong>Optimal Readiness:</strong> Routine maintained at full intensity for maximum muscle gain!";
+      }
+
+      box.classList.remove('hidden');
+      box.innerHTML = message;
+    }
+
+    // Calendar Days Grid Rendering
+    function renderCalendarGrid() {
+      const grid = document.getElementById('calendar-wireframe-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let i = 1; i <= 31; i++) {
+        let isDone = [3, 5, 8, 10, 12, 15, 17, 20, 22, 24, 27].includes(i);
+        let borderStyle = isDone ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400" : "border-brand-border bg-brand-dark/50 text-brand-textMuted";
+
+        grid.innerHTML += `
+          <div onclick="selectCalendarDay(${i})" class="h-12 rounded-lg border ${borderStyle} flex flex-col items-center justify-between p-1 hover:border-brand-blue cursor-pointer transition-all">
+            <span class="text-[10px] font-bold">${i}</span>
+            ${isDone ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>' : ''}
+          </div>
+        `;
+      }
+    }
+
+    function selectCalendarDay(day) {
+      document.getElementById('selected-date-title').innerText = `Selected: September ${day}, 2026`;
+    }
+
+    function changeMonth(dir) {
+      const label = document.getElementById('calendar-month-label');
+      label.innerText = dir > 0 ? "October 2026" : "September 2026";
+    }
+
+    // AI Chat Floating Widget
+    function toggleAiChat() {
+      document.getElementById('ai-chat-window').classList.toggle('hidden');
+    }
+
+    function handleChatKey(e) {
+      if (e.key === 'Enter') sendChatMessage();
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML += `<div class="bg-brand-blue text-white p-2.5 rounded-xl ml-auto max-w-[85%] text-right">${escapeHtml(text)}</div>`;
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      setTimeout(() => {
+        let reply = "I'm here to assist! Remember to keep your movements controlled and maintain steady breathing.";
+        if (text.toLowerCase().includes('meal') || text.toLowerCase().includes('diet')) {
+          reply = "Prioritize whole proteins and complex carbs around your workout times to maximize recovery!";
+        }
+        chatBox.innerHTML += `<div class="bg-brand-card border border-brand-border text-white p-2.5 rounded-xl max-w-[85%]">${reply}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 500);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Initialize Chart.js Graphs matching Wireframe 3
+    function initCharts() {
+      // Workout Consistency Chart
+      const ctx1 = document.getElementById('chartWorkoutConsistency');
+      if (ctx1) {
+        new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+            datasets: [{
+              label: 'Consistency',
+              data: [80, 95, 60, 100, 85, 90, 75],
+              borderColor: '#1B64F2',
+              backgroundColor: 'rgba(27, 100, 242, 0.2)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } }
+          }
+        });
+      }
+
+      // Meal Impact Chart
+      const ctx2 = document.getElementById('chartMealImpact');
+      if (ctx2) {
+        new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+            datasets: [{
+              label: 'Calories Intake',
+              data: [2100, 2250, 1950, 2200, 2300, 2100, 2050],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.2)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } }
+          }
+        });
+      }
+
+      // Profile Frequency Bar Chart (SEP, OCT, NOV)
+      const ctx3 = document.getElementById('chartFrequencyProfile');
+      if (ctx3) {
+        new Chart(ctx3, {
+          type: 'bar',
+          data: {
+            labels: ['SEP', 'OCT', 'NOV'],
+            datasets: [{
+              data: [18, 22, 26],
+              backgroundColor: '#1B64F2',
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+              y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+      }
+
+      // Profile Calorie Balance Bar Chart (SEP, OCT, NOV)
+      const ctx4 = document.getElementById('chartCalorieBalanceProfile');
+      if (ctx4) {
+        new Chart(ctx4, {
+          type: 'bar',
+          data: {
+            labels: ['SEP', 'OCT', 'NOV'],
+            datasets: [
+              { label: 'Intake', data: [2200, 2150, 2100], backgroundColor: '#06b6d4', borderRadius: 4 },
+              { label: 'Burned', data: [2400, 2350, 2300], backgroundColor: '#10b981', borderRadius: 4 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
+            scales: {
+              x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+              y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+      }
+    }
+
+    // On Load Startup
+    window.onload = function() {
+      renderCalendarGrid();
+      initCharts();
+    };
+  </script>
+</body>
+</html>
