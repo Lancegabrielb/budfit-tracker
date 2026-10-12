@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BudFit: AI-Assisted Fitness Tracker</title>
+<style>
+  :root {
+    --bg-main: #0b0f19;
+    --bg-card: rgba(19, 26, 42, 0.7);
+    --border-color: rgba(27, 100, 242, 0.3);
+    --accent-blue: #1B64F2;
+    --accent-hover: #004ecc;
+    --text-main: #ffffff;
+    --text-muted: #8a99ad;
+  }
+
+  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+  body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* --- AUTH / LOGIN GATE OVERLAY --- */
+  #authOverlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(11, 15, 25, 0.95);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .auth-card {
+    background: #131a2a;
+    border: 1px solid var(--accent-blue);
+    padding: 30px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    text-align: center;
+  }
+  .auth-card h2 { color: var(--accent-blue); margin-bottom: 20px; font-size: 24px; }
+  .auth-group { margin-bottom: 15px; text-align: left; }
+  .auth-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
+  .auth-group input {
+    width: 100%; padding: 12px; background: #1a233a; border: 1px solid #2d3748;
+    color: white; border-radius: 8px; font-size: 14px;
+  }
+  .auth-btn {
+    width: 100%; background: var(--accent-blue); color: white; padding: 12px;
+    border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;
+    margin-top: 10px; transition: 0.3s;
+  }
+  .auth-btn:hover { background: var(--accent-hover); }
+  .auth-switch { margin-top: 15px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+  .auth-switch span { color: var(--accent-blue); font-weight: bold; }
+
+  /* --- MAIN APP CONTAINER (Hidden initially) --- */
+  #mainApp {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 90px;
+  }
+
+  header {
+    background: linear-gradient(135deg, rgba(19,26,42,0.9), rgba(27,100,242,0.2));
+    border-bottom: 2px solid var(--accent-blue);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 { font-size: 20px; font-weight: 800; color: #fff; }
+  .logout-btn { background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+
+  /* Screen Tabs */
+  .screen { display: none; padding: 20px; }
+  .screen.active { display: block; }
+
+  /* Glass Cards */
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  /* Bottom Navigation Bar */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    background: rgba(13, 18, 31, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 1000;
+  }
+  .nav-btn {
+    background: none; border: none; color: var(--text-muted);
+    font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.3s;
+  }
+  .nav-btn.active { color: var(--accent-blue); transform: scale(1.05); }
+
+  /* Utilities */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  @media(max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+  .action-btn {
+    width: 100%; background: var(--accent-blue); color: white; padding: 12px;
+    border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px;
+  }
+  .action-btn:hover { background: var(--accent-hover); }
+</style>
+</head>
+<body>
+
+  <!-- LOGIN / REGISTER GATE -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <h2 id="authTitle">BudFit Login</h2>
+      <div class="auth-group" id="nameGroup" style="display:none;">
+        <label>Full Name</label>
+        <input type="text" id="regName" placeholder="e.g., Lance Bautista">
+      </div>
+      <div class="auth-group">
+        <label>Email Address</label>
+        <input type="email" id="authEmail" placeholder="name@example.com">
+      </div>
+      <div class="auth-group">
+        <label>Password</label>
+        <input type="password" id="authPass" placeholder="••••••••">
+      </div>
+      <button class="auth-btn" id="authSubmitBtn" onclick="handleAuth()">Log In</button>
+      <div class="auth-switch" onclick="toggleAuthMode()">
+        <span id="switchText">Don't have an account? Sign up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP INTERFACE (Protected) -->
+  <div id="mainApp">
+    <header>
+      <h1>BudFit: AI-Assisted Fitness Tracker</h1>
+      <button class="logout-btn" onclick="logoutUser()">Log Out</button>
+    </header>
+
+    <!-- SCREEN 1: HOME -->
+    <div id="screen-home" class="screen active">
+      <div class="grid-2">
+        <div class="card">
+          <h3>🔥 Workout Plan</h3>
+          <p style="color:var(--text-muted); font-size:13px; margin: 10px 0;">Today's AI-optimized routine based on your goals.</p>
+          <div style="background:#1a233a; padding:12px; border-radius:8px; margin-top:10px;">
+            <strong>Upper Body Hypertrophy</strong><br>
+            <span style="font-size:13px; color:var(--text-muted);">4 Sets • 10-12 Reps per exercise</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🥗 Meal & Food Tracker</h3>
+          <p style="color:var(--text-muted); font-size:13px; margin: 10px 0;">Daily Target: 2,400 kcal</p>
+          <div style="background:#1a233a; padding:12px; border-radius:8px; margin-top:10px;">
+            <strong>Logged:</strong> Chicken Breast & Rice<br>
+            <span style="font-size:13px; color:var(--text-muted);">650 kcal • 45g Protein</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>📹 Motivation Reels</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin-top:5px;">Watch daily community tips and transformation highlights.</p>
+        <div style="background:#1a233a; height:150px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-top:10px; color:var(--text-muted);">
+          [ Video Reel Player Stream ]
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: CALENDAR -->
+    <div id="screen-calendar" class="screen">
+      <div class="card">
+        <h3>📅 Calendar Tracker & Daily Summary</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin-top:5px;">September 2026 Schedule & Availability</p>
+        <div style="background:#1a233a; padding:15px; border-radius:8px; margin-top:15px;">
+          <strong>Daily Summary Status:</strong> All scheduled tasks completed on track.
+        </div>
+      </div>
+      <div class="card">
+        <h3>⏱️ Time Management Timeline</h3>
+        <div style="display:flex; justify-content:space-around; margin-top:15px; text-align:center;">
+          <div><div style="background:var(--accent-blue); height:80px; width:30px; border-radius:4px; margin:0 auto;"></div><small>MON</small></div>
+          <div><div style="background:var(--accent-blue); height:50px; width:30px; border-radius:4px; margin:0 auto;"></div><small>TUE</small></div>
+          <div><div style="background:var(--accent-blue); height:100px; width:30px; border-radius:4px; margin:0 auto;"></div><small>WED</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: PROFILE -->
+    <div id="screen-profile" class="screen">
+      <div class="card">
+        <h3>👤 User Profile</h3>
+        <p id="userProfileDisplay" style="color:var(--text-muted); font-size:14px; margin-top:8px;">Name: User | Goal: Muscle Gain</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📊 Workout Consistency</h3>
+          <div style="background:#1a233a; height:100px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-top:10px; color:var(--text-muted);">[ Consistency Chart ]</div>
+        </div>
+        <div class="card">
+          <h3>⚖️ Calorie Balance</h3>
+          <div style="background:#1a233a; height:100px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-top:10px; color:var(--text-muted);">[ Monthly Bar Graph ]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav">
+      <button class="nav-btn" onclick="switchScreen('calendar', this)">📅 Calendar</button>
+      <button class="nav-btn active" onclick="switchScreen('home', this)">🏠 Home</button>
+      <button class="nav-btn" onclick="switchScreen('profile', this)">👤 Profile</button>
+    </nav>
+  </div>
+
+<script>
+  let isRegistering = false;
+
+  function toggleAuthMode() {
+    isRegistering = !isRegistering;
+    document.getElementById('authTitle').innerText = isRegistering ? "BudFit Sign Up" : "BudFit Login";
+    document.getElementById('authSubmitBtn').innerText = isRegistering ? "Create Account" : "Log In";
+    document.getElementById('nameGroup').style.display = isRegistering ? "block" : "none";
+    document.getElementById('switchText').innerText = isRegistering ? "Already have an account? Log in" : "Don't have an account? Sign up";
+  }
+
+  function handleAuth() {
+    const email = document.getElementById('authEmail').value;
+    const pass = document.getElementById('authPass').value;
+    const name = document.getElementById('regName').value;
+
+    if (!email || !pass || (isRegistering && !name)) {
+      alert("⚠️ Please fill in all fields.");
+      return;
+    }
+
+    // Successful login/register action: hide overlay and show main app
+    document.getElementById('authOverlay').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+    
+    if (isRegistering) {
+      document.getElementById('userProfileDisplay').innerText = `Name: ${name} | Goal: Muscle Gain & Consistency`;
+    }
+  }
+
+  function logoutUser() {
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('authOverlay').style.display = 'flex';
+    document.getElementById('authEmail').value = '';
+    document.getElementById('authPass').value = '';
+  }
+
+  function switchScreen(screenName, btnElement) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById('screen-' + screenName).classList.add('active');
+    btnElement.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
