@@ -18,7 +18,7 @@
   * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
   body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-  /* FULLSCREEN LOGIN GATE */
+  /* MANDATORY FULLSCREEN LOGIN GATE OVERLAY */
   #authOverlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -80,10 +80,10 @@
   .screen { display: none; padding: 20px; }
   .screen.active { display: block; }
 
-  /* EXACT WIREFRAME 1 HOME GRID LAYOUT */
+  /* WIREFRAME 1 GRID LAYOUT */
   .wf-home-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 320px 1fr;
     gap: 20px;
   }
 
@@ -91,13 +91,26 @@
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    min-height: 380px;
-    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .video-container {
+    width: 100%;
+    height: 480px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    margin-top: 10px;
+  }
+
+  .video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
   .right-dashboard {
@@ -124,13 +137,13 @@
   .workout-item-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 12px;
     margin-top: 15px;
   }
 
   .workout-box {
     background: #1a233a;
-    border: 1fr solid #2d3748;
+    border: 1px solid #2d3748;
     border-radius: 8px;
     padding: 12px;
     text-align: center;
@@ -155,7 +168,7 @@
   }
   .nav-btn.active { color: var(--accent-blue); transform: scale(1.05); }
 
-  @media(max-width: 768px) {
+  @media(max-width: 820px) {
     .wf-home-grid { grid-template-columns: 1fr; }
     .top-trackers-grid { grid-template-columns: 1fr; }
     .workout-item-grid { grid-template-columns: 1fr; }
@@ -187,66 +200,67 @@
     </div>
   </div>
 
-  <!-- DASHBOARD APP INTERFACE -->
+  <!-- PROTECTED DASHBOARD INTERFACE -->
   <div id="mainApp">
     <header>
       <h1>BudFit: AI-Assisted Fitness Tracker</h1>
       <button class="logout-btn" onclick="logoutUser()">Log Out</button>
     </header>
 
-    <!-- SCREEN 1: HOME (EXACT SLIDE WIREFRAME LAYOUT) -->
+    <!-- SCREEN 1: HOME (EXACT WIREFRAME 1 LAYOUT) -->
     <div id="screen-home" class="screen active">
       <div class="wf-home-grid">
         
-        <!-- Left: Video Reels -->
+        <!-- LEFT: VIDEO REELS PLAYER STREAM -->
         <div class="video-reel-card">
-          <div style="font-size: 40px; margin-bottom: 10px;">▶️</div>
-          <h3>Video Reels</h3>
-          <p style="color:var(--text-muted); font-size:13px; margin-top:8px;">Motivational clips & workout form guides</p>
+          <h3 style="display:flex; align-items:center; gap:8px;">📱 Motivation Reel</h3>
+          <p style="color:var(--text-muted); font-size:12px; margin-top:4px; text-align:center;">Community workouts & form advice</p>
+          <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/gC_L9qAHVJ8" title="BudFit Motivational Reel" allowfullscreen></iframe>
+          </div>
         </div>
 
-        <!-- Right Side Stack -->
+        <!-- RIGHT SIDE: MEAL PLAN, FOOD TRACKER, WORKOUT PLAN -->
         <div class="right-dashboard">
           
-          <!-- Top Row: Meal Plan & Food Tracker -->
           <div class="top-trackers-grid">
             <div class="card">
               <h3>🥗 Meal Plan</h3>
-              <p style="color:var(--text-muted); font-size:12px; margin-top:5px;">AI Daily Recommendation</p>
-              <div style="background:#1a233a; padding:10px; border-radius:6px; margin-top:10px; font-size:13px;">
-                • Grilled Chicken & Brown Rice<br>• Protein Shake & Oats
+              <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">AI Recommended Target</p>
+              <div style="background:#1a233a; padding:12px; border-radius:8px; margin-top:10px; font-size:13px; line-height:1.6;">
+                <strong>Meal 1:</strong> Oats, Banana & Protein<br>
+                <strong>Meal 2:</strong> Chicken Breast & Rice
               </div>
             </div>
 
             <div class="card">
               <h3>🍎 Food Tracker</h3>
-              <p style="color:var(--text-muted); font-size:12px; margin-top:5px;">Calorie Progress</p>
-              <div style="background:#1a233a; padding:10px; border-radius:6px; margin-top:10px; font-size:13px;">
-                <strong>1,750 / 2,400 kcal</strong>
-                <div style="background:#2d3748; height:6px; border-radius:3px; margin-top:6px; overflow:hidden;">
-                  <div style="background:var(--accent-blue); width:70%; height:100%;"></div>
+              <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">Daily Calorie Goal</p>
+              <div style="background:#1a233a; padding:12px; border-radius:8px; margin-top:10px; font-size:13px;">
+                <strong>Logged: 1,750 / 2,400 kcal</strong>
+                <div style="background:#2d3748; height:8px; border-radius:4px; margin-top:8px; overflow:hidden;">
+                  <div style="background:var(--accent-blue); width:72%; height:100%;"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Bottom Row: Workout Plan -->
           <div class="card">
             <h3>🏋️ Workout Plan</h3>
-            <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">Today's Focus: Upper Body Hypertrophy</p>
+            <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">Today's Routine: Upper Body Hypertrophy</p>
             
             <div class="workout-item-grid">
               <div class="workout-box">
                 <strong>Bench Press</strong><br>
-                <span style="color:var(--text-muted);">4 Sets x 10 Reps</span>
+                <span style="color:var(--text-muted); font-size:12px;">4 Sets x 10 Reps</span>
               </div>
               <div class="workout-box">
                 <strong>Dumbbell Rows</strong><br>
-                <span style="color:var(--text-muted);">4 Sets x 12 Reps</span>
+                <span style="color:var(--text-muted); font-size:12px;">4 Sets x 12 Reps</span>
               </div>
               <div class="workout-box">
                 <strong>Overhead Press</strong><br>
-                <span style="color:var(--text-muted);">3 Sets x 10 Reps</span>
+                <span style="color:var(--text-muted); font-size:12px;">3 Sets x 10 Reps</span>
               </div>
             </div>
           </div>
@@ -262,7 +276,7 @@
         <h3>📅 Calendar Tracker & Daily Summary</h3>
         <p style="color:var(--text-muted); font-size:13px; margin-top:5px;">September 2026 Schedule & Availability</p>
         <div style="background:#1a233a; padding:15px; border-radius:8px; margin-top:15px;">
-          <strong>Daily Summary Status:</strong> All scheduled routines completed on time!
+          <strong>Daily Summary Status:</strong> All scheduled workouts completed on time!
         </div>
       </div>
       <div class="card">
