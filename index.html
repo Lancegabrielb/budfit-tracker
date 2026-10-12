@@ -92,119 +92,125 @@
   }
 
   /* SCREEN VIEWS */
-  .screen { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+  .screen { display: none; padding: 24px; max-width: 1300px; margin: 0 auto; width: 100%; }
   .screen.active { display: block; }
 
-  /* CARDS & PANELS */
-  .card-panel {
+  /* ================= EXACT WIREFRAME MASTER LAYOUT ================= */
+  .wireframe-home-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+  }
+
+  /* Left Column: Tall Vertical Video Reel */
+  .left-reel-panel {
     background: var(--bg-card);
     border: 1px solid var(--border-blue);
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    position: relative;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
-  .panel-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
-  }
-  .panel-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .tag-pill {
-    background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #991b1b;
-    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
-  }
-  .tag-ai {
-    background: rgba(0, 230, 118, 0.1); color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.3);
-    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
-  }
-
-  /* WIREFRAME 1: REEL PLAYER */
-  .reel-player {
+  .tall-reel-player {
     background: #000;
-    height: 320px;
+    flex: 1;
+    min-height: 480px;
     border-radius: 8px;
     position: relative;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 12px;
   }
-  .reel-player img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+  .tall-reel-player img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
   .play-btn {
     position: absolute; width: 64px; height: 64px; background: var(--accent-blue);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 0 20px rgba(27, 100, 242, 0.5);
+    cursor: pointer; box-shadow: 0 0 20px rgba(27, 100, 242, 0.6);
   }
   .play-btn::after {
     content: ''; display: block; width: 0; height: 0;
     border-top: 10px solid transparent; border-bottom: 10px solid transparent;
     border-left: 16px solid white; margin-left: 4px;
   }
-  .reel-caption {
-    position: absolute; bottom: 16px; left: 16px;
-  }
-  .reel-tag { background: var(--accent-blue); color: white; font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 3px; text-transform: uppercase; }
-  .reel-caption h4 { font-size: 15px; margin-top: 6px; font-weight: 700; }
-  .reel-nav {
-    display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 13px; color: var(--text-muted);
-  }
-  .reel-nav span { cursor: pointer; }
 
-  /* GRID LAYOUTS */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  /* Right Column Stack */
+  .right-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-  /* MEAL & FOOD TRACKER */
+  .top-trackers-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .card-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-blue);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .panel-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+  }
+  .panel-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+  /* MEAL & FOOD TRACKER DETAILS */
   .progress-bar-bg { background: var(--bg-card-inner); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 8px; }
   .progress-fill-green { background: var(--accent-green); height: 100%; width: 78%; }
-  .macro-circle-wrap { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; }
+  .macro-circle-wrap { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
   .circle-gauge {
-    width: 90px; height: 90px; border-radius: 50%; border: 6px solid var(--accent-yellow);
+    width: 80px; height: 80px; border-radius: 50%; border: 5px solid var(--accent-yellow);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 800;
+    font-size: 15px; font-weight: 800;
   }
-  .circle-gauge small { font-size: 9px; color: var(--text-muted); font-weight: 600; }
+  .circle-gauge small { font-size: 8px; color: var(--text-muted); font-weight: 600; }
   .macro-lines { flex: 1; }
-  .macro-line-item { margin-bottom: 10px; }
-  .macro-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-  .bar-cyan { background: #00bcd4; height: 6px; border-radius: 3px; width: 75%; }
-  .bar-yellow { background: var(--accent-yellow); height: 6px; border-radius: 3px; width: 50%; }
+  .macro-line-item { margin-bottom: 8px; }
+  .macro-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+  .bar-cyan { background: #00bcd4; height: 5px; border-radius: 3px; width: 75%; }
+  .bar-yellow { background: var(--accent-yellow); height: 5px; border-radius: 3px; width: 50%; }
   .add-snack-btn {
     width: 100%; background: #262010; border: 1px solid var(--accent-yellow); color: var(--accent-yellow);
-    padding: 10px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer;
+    padding: 8px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer;
   }
 
-  /* WORKOUT CARDS */
+  /* WORKOUT CARDS GRID (3 ITEMS) */
+  .workout-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
   .exercise-card {
     background: var(--bg-card-inner); border: 1px solid var(--border-blue);
-    border-radius: 10px; padding: 16px; text-align: left; position: relative;
+    border-radius: 10px; padding: 14px; text-align: left;
   }
-  .exercise-card.active { border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(27, 100, 242, 0.2); }
+  .exercise-card.active { border-color: var(--accent-blue); }
   .ex-icon-box {
-    height: 90px; background: #0a1120; border-radius: 6px; display: flex;
-    align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px;
+    height: 75px; background: #0a1120; border-radius: 6px; display: flex;
+    align-items: center; justify-content: center; font-size: 24px; margin-bottom: 10px;
   }
-  .exercise-card h5 { font-size: 14px; font-weight: 700; }
-  .exercise-card p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .exercise-card h5 { font-size: 13px; font-weight: 700; }
+  .exercise-card p { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
-  /* CALENDAR & TIMELINE WIREFRAME */
-  .summary-row {
-    display: flex; justify-content: space-between; padding: 12px 16px; background: var(--bg-card-inner);
-    border-radius: 8px; margin-bottom: 8px; font-size: 13px;
-  }
+  /* CALENDAR & PROFILE STYLES */
+  .summary-row { display: flex; justify-content: space-between; padding: 12px 16px; background: var(--bg-card-inner); border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
   .timeline-bars { display: flex; gap: 12px; height: 100px; align-items: flex-end; margin-top: 15px; }
   .time-col { flex: 1; text-align: center; }
   .bar-block { background: var(--accent-blue); border-radius: 6px; width: 100%; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px; }
   .cal-day-header { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; padding-bottom: 4px; }
-  .cal-cell {
-    background: var(--bg-card-inner); border: 1px solid var(--border-blue); height: 48px; border-radius: 6px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;
-  }
+  .cal-cell { background: var(--bg-card-inner); border: 1px solid var(--border-blue); height: 48px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
   .cal-cell.active-day { border-color: var(--accent-green); }
   .cal-dot { width: 4px; height: 4px; background: var(--accent-green); border-radius: 50%; margin-top: 3px; }
-
-  /* PROFILE WIREFRAME CHARTS */
-  .chart-box { height: 140px; background: var(--bg-card-inner); border-radius: 8px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 10px; gap: 15px; }
+  .chart-box { height: 140px; background: var(--bg-card-inner); border-radius: 8px; display: flex; align-items: flex-end; padding: 10px; }
   .chart-wave { width: 100%; height: 100%; border-bottom: 2px solid var(--accent-blue); background: linear-gradient(0deg, rgba(27,100,242,0.2), transparent); }
   .chart-wave-green { border-bottom-color: var(--accent-green); background: linear-gradient(0deg, rgba(0,230,118,0.2), transparent); }
 
@@ -219,39 +225,17 @@
   }
   .nav-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 
-  /* ================= GUARANTEED VISIBLE FLOATING AI ASSISTANT WIDGET ================= */
+  /* FLOATING AI CHATBOT */
   #aiWidgetBtn {
-    position: fixed !important;
-    bottom: 25px !important;
-    right: 25px !important;
-    width: 60px !important;
-    height: 60px !important;
-    background: #1B64F2 !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    box-shadow: 0 6px 25px rgba(27, 100, 242, 0.7) !important;
-    z-index: 99999 !important;
-    font-size: 26px !important;
-    border: 2px solid #ffffff !important;
+    position: fixed !important; bottom: 25px !important; right: 25px !important; width: 60px !important; height: 60px !important;
+    background: #1B64F2 !important; border-radius: 50% !important; display: flex !important; align-items: center !important;
+    justify-content: center !important; cursor: pointer !important; box-shadow: 0 6px 25px rgba(27, 100, 242, 0.7) !important;
+    z-index: 99999 !important; font-size: 26px !important; border: 2px solid #ffffff !important;
   }
-  #aiWidgetBtn:hover { transform: scale(1.1); }
-
   #aiChatDrawer {
-    position: fixed !important;
-    bottom: 95px !important;
-    right: 25px !important;
-    width: 340px !important;
-    background: #0d1527 !important;
-    border: 2px solid #1B64F2 !important;
-    border-radius: 14px !important;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.9) !important;
-    display: none;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    z-index: 99999 !important;
+    position: fixed !important; bottom: 95px !important; right: 25px !important; width: 340px !important; background: #0d1527 !important;
+    border: 2px solid #1B64F2 !important; border-radius: 14px !important; box-shadow: 0 12px 40px rgba(0,0,0,0.9) !important;
+    display: none; flex-direction: column !important; overflow: hidden !important; z-index: 99999 !important;
   }
   .ai-header { background: #1B64F2; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; color: white; }
   .ai-body { padding: 16px; height: 220px; overflow-y: auto; font-size: 13px; line-height: 1.5; color: white; }
@@ -260,8 +244,9 @@
   .ai-input-wrap input { flex: 1; background: transparent; border: none; color: white; font-size: 12px; outline: none; }
   .ai-send-btn { background: #1B64F2; border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
 
-  @media(max-width: 768px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  @media(max-width: 900px) {
+    .wireframe-home-grid { grid-template-columns: 1fr; }
+    .top-trackers-row { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -301,114 +286,116 @@
       </div>
     </header>
 
-    <!-- SCREEN 1: HOME (WIREFRAME 1) -->
+    <!-- SCREEN 1: HOME (EXACT WIREFRAME LAYOUT) -->
     <div id="screen-home" class="screen active">
-      
-      <!-- FITNESS MOTIVATION REEL -->
-      <div class="card-panel">
-        <div class="panel-header">
-          <div class="panel-title">🎞️ Fitness Motivation Reel</div>
-          <div class="tag-pill">REEL #1</div>
-        </div>
-        <div class="reel-player">
-          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop" alt="Workout reel">
-          <div class="play-btn"></div>
-          <div class="reel-caption">
-            <span class="reel-tag">BEGINNER FORM</span>
-            <h4>15-Minute Dumbbell Form Technique</h4>
-          </div>
-        </div>
-        <div class="reel-nav">
-          <span>&lt; Prev Reel</span>
-          <span>1 of 3</span>
-          <span>Next Reel &gt;</span>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <!-- MEAL PLAN -->
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-title">🥗 Meal Plan</div>
-            <div class="tag-ai">AI Optimized</div>
-          </div>
-          <div style="background:var(--bg-card-inner); padding:14px; border-radius:8px; border:1px solid var(--border-blue); margin-bottom:12px;">
-            <strong style="font-size:13px;">Grilled Chicken & Sweet Potato Bowl</strong>
-            <div class="progress-bar-bg"><div class="progress-fill-green"></div></div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:6px;">
-              <span>Protein Target</span>
-              <span>140g / 180g</span>
-            </div>
-          </div>
-          <ul style="font-size:12px; line-height:2; list-style:none; color:#cbd5e1;">
-            <li><span style="color:var(--accent-green)">•</span> Breakfast: Oats with Whey & Berries (450 kcal)</li>
-            <li><span style="color:var(--accent-green)">•</span> Lunch: Lean Beef Bowl & Brown Rice (650 kcal)</li>
-            <li><span style="color:var(--accent-green)">•</span> Dinner: Grilled Salmon & Asparagus (520 kcal)</li>
-          </ul>
-        </div>
-
-        <!-- FOOD TRACKER -->
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-title">🍽️ Food Tracker</div>
-            <div style="background:#262010; color:var(--accent-yellow); font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;">Daily Calories</div>
-          </div>
-          <div class="macro-circle-wrap">
-            <div class="circle-gauge">
-              1,620
-              <small>/ 2,200 KCAL</small>
-            </div>
-            <div class="macro-lines">
-              <div class="macro-line-item">
-                <div class="macro-label"><span>Carbs</span><strong>210g</strong></div>
-                <div class="bar-cyan"></div>
-              </div>
-              <div class="macro-line-item">
-                <div class="macro-label"><span>Fats</span><strong>55g</strong></div>
-                <div class="bar-yellow"></div>
-              </div>
-            </div>
-          </div>
-          <button class="add-snack-btn">+ Log 250 kcal Snack</button>
-          <div style="font-size:11px; color:var(--text-muted); margin-top:10px; display:flex; justify-content:space-between;">
-            <span>Water Intake: <strong>1.75 L</strong></span>
-            <span style="color:var(--accent-blue); cursor:pointer;">+ Glass</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- WORKOUT PLAN -->
-      <div class="card-panel">
-        <div class="panel-header">
-          <div class="panel-title">🏋️ Workout Plan</div>
-          <button style="background:var(--accent-blue); border:none; color:white; font-size:12px; font-weight:700; padding:6px 14px; border-radius:6px; cursor:pointer;">⚡ Adapt Workout Routine</button>
-        </div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;" id="workoutOwnerText">AI Adjusted Schedule for Member</p>
+      <div class="wireframe-home-grid">
         
-        <div class="grid-3">
-          <div class="exercise-card">
-            <div class="ex-icon-box">🏋️</div>
-            <h5>Dumbbell Bench Press</h5>
-            <p>4 Sets × 10 Reps • 20 kg</p>
+        <!-- LEFT COLUMN: Tall Vertical Reel Player -->
+        <div class="left-reel-panel">
+          <div class="panel-header" style="margin-bottom:0;">
+            <div class="panel-title">🎞️ Fitness Motivation Reel</div>
+            <div style="background:rgba(220,38,38,0.2); color:#f87171; border:1px solid #991b1b; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">REEL #1</div>
           </div>
-          <div class="exercise-card">
-            <div class="ex-icon-box">↕️</div>
-            <h5>Lat Pulldowns / Rows</h5>
-            <p>4 Sets × 12 Reps • 45 kg</p>
+          <div class="tall-reel-player">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop" alt="Workout reel">
+            <div class="play-btn"></div>
           </div>
-          <div class="exercise-card active">
-            <div class="ex-icon-box">🏃</div>
-            <h5 style="color:var(--accent-green)">Incline Treadmill Walk</h5>
-            <p>15 Mins • Incline 8.0</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:12px; color:var(--text-muted);">
+            <span>&lt; Prev Reel</span>
+            <span>1 of 3</span>
+            <span>Next Reel &gt;</span>
           </div>
         </div>
-      </div>
 
+        <!-- RIGHT COLUMN: Stacked Trackers & Workout Plan -->
+        <div class="right-stack">
+          
+          <!-- Top Row: Meal Plan & Food Tracker Side-by-Side -->
+          <div class="top-trackers-row">
+            
+            <!-- Meal Plan -->
+            <div class="card-panel">
+              <div class="panel-header">
+                <div class="panel-title">🥗 Meal Plan</div>
+                <div style="background:rgba(0,230,118,0.1); color:var(--accent-green); border:1px solid rgba(0,230,118,0.3); font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">AI Optimized</div>
+              </div>
+              <div style="background:var(--bg-card-inner); padding:10px; border-radius:8px; border:1px solid var(--border-blue); margin-bottom:10px;">
+                <strong style="font-size:12px;">Grilled Chicken & Sweet Potato Bowl</strong>
+                <div class="progress-bar-bg"><div class="progress-fill-green"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-top:4px;">
+                  <span>Protein Target</span>
+                  <span>140g / 180g</span>
+                </div>
+              </div>
+              <ul style="font-size:11px; line-height:1.8; list-style:none; color:#cbd5e1;">
+                <li>• Breakfast: Oats & Berries (450 kcal)</li>
+                <li>• Lunch: Lean Beef & Rice (650 kcal)</li>
+                <li>• Dinner: Salmon & Asparagus (520 kcal)</li>
+              </ul>
+            </div>
+
+            <!-- Food Tracker -->
+            <div class="card-panel">
+              <div class="panel-header">
+                <div class="panel-title">🍽️ Food Tracker</div>
+                <div style="background:#262010; color:var(--accent-yellow); font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">Daily Calories</div>
+              </div>
+              <div class="macro-circle-wrap">
+                <div class="circle-gauge">
+                  1,620
+                  <small>/2,200</small>
+                </div>
+                <div class="macro-lines">
+                  <div class="macro-line-item">
+                    <div class="macro-label"><span>Carbs</span><strong>210g</strong></div>
+                    <div class="bar-cyan"></div>
+                  </div>
+                  <div class="macro-line-item">
+                    <div class="macro-label"><span>Fats</span><strong>55g</strong></div>
+                    <div class="bar-yellow"></div>
+                  </div>
+                </div>
+              </div>
+              <button class="add-snack-btn">+ Log 250 kcal Snack</button>
+            </div>
+
+          </div>
+
+          <!-- Bottom Row: Workout Plan -->
+          <div class="card-panel">
+            <div class="panel-header">
+              <div class="panel-title">🏋️ Workout Plan</div>
+              <button style="background:var(--accent-blue); border:none; color:white; font-size:11px; font-weight:700; padding:5px 12px; border-radius:6px; cursor:pointer;">⚡ Adapt Routine</button>
+            </div>
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;" id="workoutOwnerText">AI Adjusted Schedule for Member</p>
+            
+            <div class="workout-grid-3">
+              <div class="exercise-card">
+                <div class="ex-icon-box">🏋️</div>
+                <h5>Dumbbell Bench</h5>
+                <p>4 Sets × 10 Reps • 20 kg</p>
+              </div>
+              <div class="exercise-card">
+                <div class="ex-icon-box">↕️</div>
+                <h5>Lat Pulldowns</h5>
+                <p>4 Sets × 12 Reps • 45 kg</p>
+              </div>
+              <div class="exercise-card active">
+                <div class="ex-icon-box">🏃</div>
+                <h5 style="color:var(--accent-green)">Treadmill Walk</h5>
+                <p>15 Mins • Incline 8.0</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
 
-    <!-- SCREEN 2: CALENDAR (WIREFRAME 2) -->
+    <!-- SCREEN 2: CALENDAR -->
     <div id="screen-calendar" class="screen">
-      <div class="card-panel">
+      <div class="card-panel" style="margin-bottom:20px;">
         <div class="panel-header">
           <div class="panel-title">📅 CALENDAR TRACKER</div>
           <div style="background:var(--bg-card-inner); border:1px solid var(--border-blue); padding:4px 12px; border-radius:6px; font-size:13px; font-weight:700;">&lt; September 2026 &gt;</div>
@@ -416,14 +403,14 @@
         <p style="font-size:12px; color:var(--text-muted);">Displays user monthly and daily activity log for workouts and meals.</p>
       </div>
 
-      <div class="card-panel">
+      <div class="card-panel" style="margin-bottom:20px;">
         <h4 style="font-size:15px; margin-bottom:12px;">Daily Summary</h4>
         <div class="summary-row"><span>Workout Status:</span><strong style="color:var(--accent-green)">Upper Body (Completed)</strong></div>
         <div class="summary-row"><span>Calorie Balance:</span><strong>2,100 / 2,200 kcal</strong></div>
         <div class="summary-row"><span>AI Consistency Score:</span><strong style="color:var(--accent-yellow)">92% On Track</strong></div>
       </div>
 
-      <div class="card-panel">
+      <div class="card-panel" style="margin-bottom:20px;">
         <h4 style="font-size:15px; margin-bottom:6px;">Time Management Timeline</h4>
         <p style="font-size:12px; color:var(--text-muted);">Configure available hours for workouts across week days:</p>
         <div class="timeline-bars">
@@ -441,30 +428,25 @@
           <div class="cal-cell active-day">8<div class="cal-dot"></div></div><div class="cal-cell">9</div><div class="cal-cell active-day">10<div class="cal-dot"></div></div><div class="cal-cell">11</div><div class="cal-cell active-day">12<div class="cal-dot"></div></div><div class="cal-cell">13</div><div class="cal-cell">14</div>
           <div class="cal-cell active-day" style="border-color:var(--accent-blue); background:#0f1d38;">15<div class="cal-dot"></div></div><div class="cal-cell">16</div><div class="cal-cell active-day">17<div class="cal-dot"></div></div><div class="cal-cell">18</div><div class="cal-cell">19</div><div class="cal-cell active-day">20<div class="cal-dot"></div></div><div class="cal-cell">21</div>
         </div>
-        <div style="background:var(--bg-card-inner); border:1px solid var(--border-blue); padding:12px; border-radius:8px; margin-top:14px; font-size:12px;">
-          <strong style="color:var(--accent-blue)">Selected: September 15, 2026</strong>
-          <div style="display:flex; justify-content:space-between; margin-top:6px;"><span>Logged Workout: <strong>Push Hypertrophy (45m)</strong></span><span style="color:var(--accent-green)">✓ Complete</span></div>
-          <div style="display:flex; justify-content:space-between; margin-top:4px;"><span>Logged Meals: <strong>3 Meals (2,150 kcal)</strong></span><span style="color:var(--accent-green)">✓ Logged</span></div>
-        </div>
       </div>
     </div>
 
-    <!-- SCREEN 3: PROFILE (WIREFRAME 3) -->
+    <!-- SCREEN 3: PROFILE -->
     <div id="screen-profile" class="screen">
-      <div class="card-panel">
+      <div class="card-panel" style="margin-bottom:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
             <h2 id="profileName" style="font-size:22px;">Lance Bautista</h2>
             <p style="color:var(--accent-blue); font-size:13px; font-weight:700;" id="profileGoal">Goal: Muscle Gain & Consistency</p>
             <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">Height: 171 cm • Weight: 68 kg • Target: 2,200 kcal</p>
           </div>
-          <button style="background:var(--accent-blue); border:none; color:white; font-weight:700; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:13px;">Edit Profile / Goals</button>
+          <button style="background:var(--accent-blue); border:none; color:white; font-weight:700; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:13px;">Edit Profile</button>
         </div>
       </div>
 
-      <div class="card-panel">
+      <div class="card-panel" style="margin-bottom:20px;">
         <h4 style="font-size:14px; font-weight:800; letter-spacing:0.5px; margin-bottom:14px;">FITNESS TRACK (DETAILED PROGRESS)</h4>
-        <div class="grid-2">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
           <div>
             <h5 style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">WORKOUT CONSISTENCY</h5>
             <div class="chart-box"><div class="chart-wave"></div></div>
@@ -472,25 +454,6 @@
           <div>
             <h5 style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">MEAL IMPACT & CALORIES</h5>
             <div class="chart-box"><div class="chart-wave-green"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="card-panel">
-          <h4 style="font-size:13px; margin-bottom:12px;">FREQUENCY</h4>
-          <div style="display:flex; justify-content:space-around; align-items:flex-end; height:100px; background:var(--bg-card-inner); padding:10px; border-radius:8px;">
-            <div style="background:var(--accent-blue); width:30px; height:60px; border-radius:4px;"></div>
-            <div style="background:var(--accent-blue); width:30px; height:80px; border-radius:4px;"></div>
-            <div style="background:var(--accent-blue); width:30px; height:95px; border-radius:4px;"></div>
-          </div>
-        </div>
-        <div class="card-panel">
-          <h4 style="font-size:13px; margin-bottom:12px;">CALORIE BALANCE</h4>
-          <div style="display:flex; justify-content:space-around; align-items:flex-end; height:100px; background:var(--bg-card-inner); padding:10px; border-radius:8px;">
-            <div style="background:#00bcd4; width:20px; height:70px; border-radius:3px;"></div>
-            <div style="background:var(--accent-green); width:20px; height:85px; border-radius:3px;"></div>
-            <div style="background:#00bcd4; width:20px; height:75px; border-radius:3px;"></div>
           </div>
         </div>
       </div>
@@ -504,7 +467,7 @@
     </nav>
   </div>
 
-  <!-- FIXED FLOATING AI CHATBOT BUTTON & DRAWER -->
+  <!-- FLOATING AI COMPANION WIDGET -->
   <div id="aiWidgetBtn" onclick="toggleAIChat()">🤖</div>
   <div id="aiChatDrawer">
     <div class="ai-header">
@@ -590,5 +553,7 @@
   }
 </script>
 
+</body>
+</html>
 </body>
 </html>
