@@ -219,25 +219,46 @@
   }
   .nav-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 
-  /* ================= RESTORED FLOATING AI ASSISTANT WIDGET ================= */
+  /* ================= GUARANTEED VISIBLE FLOATING AI ASSISTANT WIDGET ================= */
   #aiWidgetBtn {
-    position: fixed; bottom: 85px; right: 24px; width: 54px; height: 54px; background: var(--accent-blue);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(27, 100, 242, 0.6); z-index: 9500; font-size: 24px; transition: 0.2s;
+    position: fixed !important;
+    bottom: 25px !important;
+    right: 25px !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: #1B64F2 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 6px 25px rgba(27, 100, 242, 0.7) !important;
+    z-index: 99999 !important;
+    font-size: 26px !important;
+    border: 2px solid #ffffff !important;
   }
-  #aiWidgetBtn:hover { transform: scale(1.08); background: var(--accent-blue-hover); }
-  
+  #aiWidgetBtn:hover { transform: scale(1.1); }
+
   #aiChatDrawer {
-    position: fixed; bottom: 150px; right: 24px; width: 340px; background: var(--bg-card);
-    border: 1px solid var(--border-highlight); border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-    display: none; flex-direction: column; overflow: hidden; z-index: 9500;
+    position: fixed !important;
+    bottom: 95px !important;
+    right: 25px !important;
+    width: 340px !important;
+    background: #0d1527 !important;
+    border: 2px solid #1B64F2 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.9) !important;
+    display: none;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    z-index: 99999 !important;
   }
-  .ai-header { background: var(--accent-blue); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
-  .ai-body { padding: 16px; height: 220px; overflow-y: auto; font-size: 13px; line-height: 1.5; }
-  .ai-msg { background: var(--bg-card-inner); padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border-blue); }
-  .ai-input-wrap { display: flex; padding: 10px; background: #080e1b; border-top: 1px solid var(--border-blue); }
+  .ai-header { background: #1B64F2; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; color: white; }
+  .ai-body { padding: 16px; height: 220px; overflow-y: auto; font-size: 13px; line-height: 1.5; color: white; }
+  .ai-msg { background: #080e1b; padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #162a52; color: white; }
+  .ai-input-wrap { display: flex; padding: 10px; background: #080e1b; border-top: 1px solid #162a52; }
   .ai-input-wrap input { flex: 1; background: transparent; border: none; color: white; font-size: 12px; outline: none; }
-  .ai-send-btn { background: var(--accent-blue); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+  .ai-send-btn { background: #1B64F2; border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
 
   @media(max-width: 768px) {
     .grid-2, .grid-3 { grid-template-columns: 1fr; }
@@ -483,7 +504,7 @@
     </nav>
   </div>
 
-  <!-- RESTORED FLOATING AI COMPANION WIDGET -->
+  <!-- FIXED FLOATING AI CHATBOT BUTTON & DRAWER -->
   <div id="aiWidgetBtn" onclick="toggleAIChat()">🤖</div>
   <div id="aiChatDrawer">
     <div class="ai-header">
@@ -491,7 +512,7 @@
       <span style="cursor:pointer; font-weight:bold;" onclick="toggleAIChat()">✕</span>
     </div>
     <div class="ai-body" id="aiChatBody">
-      <div class="ai-msg">👋 Hi! I'm your BudFit AI. Ask me anything about your workout, diet, or routine adjustments!</div>
+      <div class="ai-msg">👋 Hi Lance! I'm your BudFit AI. Ask me anything about your workout, diet, or routine adjustments!</div>
     </div>
     <div class="ai-input-wrap">
       <input type="text" id="aiInput" placeholder="Ask BudFit AI..." onkeypress="if(event.key==='Enter') sendAIMsg()">
